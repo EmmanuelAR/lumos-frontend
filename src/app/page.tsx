@@ -51,11 +51,11 @@ const LandingPage = () => {
                         transition duration-500 hover:text-black hover:bg-white">
               Get started
             </a>
-            <a href='#'
+            <Link href='/knowmore'
               className="text-xl border border-white px-7 py-3 rounded-md font-neuethin 
                         transition duration-500 hover:text-black hover:bg-white">
               Know more
-            </a>
+            </Link>
           </div>
         </div>
       </div>
