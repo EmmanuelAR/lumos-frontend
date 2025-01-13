@@ -4,7 +4,6 @@ export interface Position {
       t1: string,
       t2: string
     };
-    poolHref: string,
     roi: number;
     feeAPY: number;
     liquidity: number;

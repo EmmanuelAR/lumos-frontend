@@ -4,32 +4,26 @@ import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
 import Image from 'next/image'
 import Link from 'next/link'; // Importamos Link de Next.js
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Position } from "@/types/Position";
+import { fetchPosition } from "@/apis/ekuboApi";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
   const [protocol, setProtocol] = useState("Ekubo");
+  const [positions, setPositions] = useState<Position[] | undefined>([]);
 
-  //TODO: Implement fetch hook
-  const positions: Position[] = [
-    {
-      positionId: 10809,
-      pool: {
-        t1: "STRK",
-        t2: "USDC",
-      },
-      poolHref: "https://app.ekubo.org/positions/new?baseCurrency=STRK&quoteCurrency=USDC",
-      roi: 0.9,
-      feeAPY: 11.8,
-      liquidity: 22200,
-      priceRange: {
-        min: 0.45,
-        max: 0.59
-      },
-      currentPrice: 0.45
+  useEffect(() => {
+    async function getPositions() {
+        try {
+          setPositions(await fetchPosition("0x0528A7ba821024a8eC44dff0bFFe15443d811F233e4de7AB1a8C26f251597c4c"));
+        }
+        catch(err) {
+            console.log(err);
+        }
     }
-  ];
+    getPositions();
+  }, []);
 
   function handleProtocolChange(pProtocol: string) {
     setProtocol(pProtocol)
@@ -66,8 +60,8 @@ export default function MyPositions() {
               </button>
             ))}
           </div>
-
-          {positions.length > 0 ? (
+            
+          {positions != undefined ? (
             <div className="border border-gray-500 rounded-2xl overflow-hidden">
               <table className="w-full">
                 <thead>
@@ -95,7 +89,7 @@ export default function MyPositions() {
                       </td>
                       <td className="px-6 py-4">
                         <Link 
-                          href={position.poolHref}
+                          href={`https://app.ekubo.org/positions/new?baseCurrency=${position.pool.t1}&quoteCurrency=${position.pool.t2}`}
                           target="_blank" 
                           className="text-indigo-400 hover:text-indigo-300 transition-colors"
                         >
@@ -107,9 +101,9 @@ export default function MyPositions() {
                       <td className="px-6 py-4">${position.liquidity.toLocaleString('en-US', {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 1
-                      })}k</td>
+                      })}</td>
                       <td className="px-6 py-4">${position.priceRange.min}-{position.priceRange.max}</td>
-                      <td className="px-6 py-4">${position.currentPrice}</td>
+                      <td className="px-6 py-4">{position.currentPrice}</td>
                     </tr>
                   ))}
                 </tbody>
